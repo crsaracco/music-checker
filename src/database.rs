@@ -1,6 +1,7 @@
+extern crate rusqlite;
+
 use std::result::Result;
 use std::string::String;
-use rusqlite;
 
 pub struct Database {
     conn: rusqlite::Connection,
@@ -42,51 +43,3 @@ impl Database {
         Ok(())
     }
 }
-
-
-
-
-
-//use rusqlite::{Connection, Error};
-
-/*
-CREATE TABLE IF NOT EXISTS artists (
-	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	name TEXT,
-	musicbrainzId TEXT,
-	lastChecked INTEGER
-);
-*/
-
-/*
-pub fn create_artists_table() -> Result<(), rusqlite::Error> {
-    try!(conn.execute(
-        "CREATE TABLE IF NOT EXISTS artists (
-        	id INTEGER PRIMARY KEY AUTOINCREMENT,
-        	name TEXT,
-        	musicbrainzId TEXT,
-        	lastChecked INTEGER
-        )", &[])
-    );
-    Ok(())
-}
-*/
-
-/*
-pub fn get_rows() -> Result<Vec<i64>, Error> {
-    let result: Vec<i64> = Vec::new();
-    let conn = try!(Connection::open("test.sqlite"));
-    let mut stmt = try!(conn.prepare("SELECT b FROM test"));
-
-    let mut rows_iter = stmt.query_map(&[], |row| {
-        let test: i64 = row.get(0);
-        test
-    }).unwrap();
-
-    for row in rows_iter {
-        println!("Test: {:?}", row.unwrap());
-    }
-
-    Ok(result)
-}
-*/

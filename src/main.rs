@@ -1,17 +1,11 @@
-extern crate rusqlite;
 extern crate getopts;
 
 use std::env;
 use std::string::String;
 use getopts::Options;
+use std::process::exit;
 
 mod database;
-
-fn print_usage(program: &str, opts: Options) {
-    let brief = format!("Usage: {} [options]", program);
-    let brief = format!("{}\n\nIf no options are given, this program will print out all missing releases.", brief);
-    print!("{}", opts.usage(&brief));
-}
 
 fn main() {
     // Get raw arguments to pass to getopts
@@ -35,40 +29,80 @@ fn main() {
 
     // Check -h; if it matches, print help and quit.
     if matches.opt_present("h") {
-        // -h detected; print help/usage
         print_usage(&program, opts);
-        return;
     }
 
     // Check -n; if it matches, make the database and quit.
-    if matches.opt_str("n").is_some() {
-        let filename = matches.opt_str("n").unwrap();
-        let database = database::Database::new(filename.clone());
-
-        match database.create_artists_table() {
-            Ok(_) => {},
-            Err(e) => {
-                println!("error: {}", e);
-                return;
-            },
-        }
-
-        match database.create_releases_table() {
-            Ok(_) => {},
-            Err(e) => {
-                println!("error: {}", e);
-                return;
-            },
-        }
-
-        println!("Created new artist database: {}", filename);
+    if matches.opt_present("n") {
+        let filename = matches.opt_str("n").unwrap(); // unwrap is okay because opts.parse checks this for us (opts.optopt requires an argument)
+        create_new_database(filename);
         return;
     }
 
     // Check -c and -s (only one allowed); if match, check the single artist against MusicBrainz and quit.
-    if matches.opt_str("c").is_some() || matches.opt_str("s").is_some() {
-        panic!("TODO: -c / -s");
+    let opt_c_present = matches.opt_present("c");
+    let opt_s_present = matches.opt_present("s");
+    if opt_c_present && opt_s_present {
+        println!("ERROR: Only one of the (-s / -c) arguments is allowed!");
+        exit(1);
+    }
+    else if opt_c_present {
+        check_all_artists();
+    }
+    else if opt_s_present {
+        match matches.opt_str("s") {
+            Some(s) => {
+                check_single_artist_given(s);
+            },
+            None => {
+                check_single_artist_least_recent();
+            }
+        }
     }
 
-    panic!("TODO: This would print out all missing releases.")
+    print_missing_releases();
+}
+
+
+
+fn print_usage(program: &str, opts: Options) {
+    let brief = format!("Usage: {} [options]", program);
+    let brief = format!("{}\n\nIf no options are given, this program will print out all missing releases.", brief);
+    print!("{}", opts.usage(&brief));
+    exit(1);
+}
+
+fn create_new_database(filename: String) {
+    let database = database::Database::new(filename.clone());
+    match database.create_artists_table() {
+        Ok(_) => {},
+        Err(e) => {
+            println!("ERROR: {}", e);
+            exit(1);
+        },
+    }
+    match database.create_releases_table() {
+        Ok(_) => {},
+        Err(e) => {
+            println!("ERROR: {}", e);
+            exit(1);
+        },
+    }
+    println!("Created new artist database: {}", filename);
+}
+
+fn check_all_artists() {
+    unimplemented!();
+}
+
+fn check_single_artist_given(s: String) {
+    unimplemented!();
+}
+
+fn check_single_artist_least_recent() {
+    unimplemented!();
+}
+
+fn print_missing_releases() {
+    unimplemented!();
 }
