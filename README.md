@@ -6,6 +6,10 @@ This program will check your music collection against the [MusicBrainz](https://
 
 For now, your "collection" is just some metadata inside a sqlite database, and the user has to manually add artists and confirm/ignore releases via sqlite. Maybe I'll write some interface through the rust program eventually.
 
+### Dependencies
+
+You need to be running a nightly version of Rust, since this project is using the `serde` crate using the "nightly" method.
+
 ### License
 
 MIT. See the `LICENSE` file for more info.

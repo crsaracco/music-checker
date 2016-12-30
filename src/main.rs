@@ -5,7 +5,7 @@ use std::string::String;
 use getopts::Options;
 use std::process::exit;
 
-mod database;
+mod database; // TODO: "use database::Database"
 
 fn main() {
     // Get raw arguments to pass to getopts
@@ -62,8 +62,6 @@ fn main() {
 
     print_missing_releases();
 }
-
-
 
 fn print_usage(program: &str, opts: Options) {
     let brief = format!("Usage: {} [options]", program);

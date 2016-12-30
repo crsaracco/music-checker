@@ -3,6 +3,19 @@ name = "rust-music-checker"
 version = "0.1.0"
 authors = ["Charles Saracco <crsaracco@gmail.com>"]
 
+[[bin]]
+name = "musicbrainz-driver"
+path = "src/musicbrainz-driver.rs"
+
+[[bin]]
+name = "rate-limiter"
+path = "src/rate-limiter.rs"
+
 [dependencies]
 rusqlite = "*"
 getopts = "*"
+hyper = "*"
+ratelimit = "*"
+serde = "0.8"
+serde_derive = "0.8"
+serde_json = "0.8"

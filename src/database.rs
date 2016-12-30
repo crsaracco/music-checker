@@ -3,6 +3,8 @@ extern crate rusqlite;
 use std::result::Result;
 use std::string::String;
 
+// TODO: use rusqlite::Connection
+
 pub struct Database {
     conn: rusqlite::Connection,
 }
