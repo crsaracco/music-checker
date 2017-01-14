@@ -17,7 +17,7 @@ fn main() {
 
     // List all possible arguments to be parsed
     opts.optflag("h", "help", "print this help menu");
-    opts.optopt("n", "new", "Create a new database with given name", "NAME");
+    opts.optflag("n", "new", "Create a new artist database");
     opts.optflag("c", "check", "Check all artists against the MusicBrainz database");
     opts.optflagopt("s", "check-single", "Check only a single artist against the MusicBrainz database. By default, this checks the least-recently-checked aritst.", "ARTIST");
 
@@ -34,8 +34,7 @@ fn main() {
 
     // Check -n; if it matches, make the database and quit.
     if matches.opt_present("n") {
-        let filename = matches.opt_str("n").unwrap(); // unwrap is okay because opts.parse checks this for us (opts.optopt requires an argument)
-        create_new_database(filename);
+        create_new_database();
         return;
     }
 
@@ -63,6 +62,8 @@ fn main() {
     print_missing_releases();
 }
 
+
+
 fn print_usage(program: &str, opts: Options) {
     let brief = format!("Usage: {} [options]", program);
     let brief = format!("{}\n\nIf no options are given, this program will print out all missing releases.", brief);
@@ -70,7 +71,8 @@ fn print_usage(program: &str, opts: Options) {
     exit(1);
 }
 
-fn create_new_database(filename: String) {
+fn create_new_database() {
+    let filename = String::from("music-checker.sqlite"); // TODO: don't hardcode
     let database = database::Database::new(filename.clone());
     match database.create_artists_table() {
         Ok(_) => {},
@@ -98,6 +100,19 @@ fn check_single_artist_given(s: String) {
 }
 
 fn check_single_artist_least_recent() {
+    let filename = String::from("music-checker.sqlite"); // TODO: don't hardcode
+    let database = database::Database::new(filename.clone());  // TODO: Or maybe just pass in a database "connection"
+
+    let artist = database.get_least_recently_checked_artist().unwrap();
+    println!("Artist: {:?}", artist);
+
+    // Need:
+    // 1. [DONE] Database to get least-recently-checked artist
+    // 2. MusicBrainz to check the artist's release groups
+    // 3. MusicBrainz to check each release-group that we potentially care about and see if it's an official release
+    // 4. Database to store any release-groups we don't already have
+    // 5. Database to update the lastChecked value for this artist
+
     unimplemented!();
 }
 
