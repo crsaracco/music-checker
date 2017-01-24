@@ -11,10 +11,10 @@ pub struct Database {
 
 #[derive(Debug)]
 pub struct Artist {
-    id: i32,
-    name: String,
-    musicbrainz_id: String,
-    last_checked: i64
+    pub id: i32,
+    pub name: String,
+    pub musicbrainz_id: String,
+    pub last_checked: i64
 }
 
 impl Database {

@@ -1,11 +1,20 @@
+#[macro_use]
+extern crate serde_derive;
+extern crate serde_json;
+extern crate hyper;
+extern crate ratelimit;
 extern crate getopts;
+
+mod database; // TODO: "use database::Database"
+mod musicbrainz;
 
 use std::env;
 use std::string::String;
 use getopts::Options;
 use std::process::exit;
+use musicbrainz::MusicBrainz;
 
-mod database; // TODO: "use database::Database"
+const USER_AGENT: &'static str = "EDIT THIS";  // See API rules for naming convention
 
 fn main() {
     // Get raw arguments to pass to getopts
@@ -106,9 +115,22 @@ fn check_single_artist_least_recent() {
     let artist = database.get_least_recently_checked_artist().unwrap();
     println!("Artist: {:?}", artist);
 
+    let mut musicbrainz = MusicBrainz::new(USER_AGENT.to_string());
+    let releases = musicbrainz.fetch_release_groups(artist.musicbrainz_id);
+    //println!("Releases:\n{:?}", releases);
+
+    for release in releases {
+        if release.first_release_date != "" {
+            if release.primary_type == "Album" || release.primary_type == "EP" || release.primary_type == "Other" {  // TODO: use a match instead?
+                println!("{} {:10}{:15}{}", release.id, release.primary_type, release.first_release_date, release.title);
+                musicbrainz.check_release_group_official(release.id);
+            }
+        }
+    }
+
     // Need:
     // 1. [DONE] Database to get least-recently-checked artist
-    // 2. MusicBrainz to check the artist's release groups
+    // 2. [DONE] MusicBrainz to check the artist's release groups
     // 3. MusicBrainz to check each release-group that we potentially care about and see if it's an official release
     // 4. Database to store any release-groups we don't already have
     // 5. Database to update the lastChecked value for this artist
