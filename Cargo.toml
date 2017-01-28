@@ -7,10 +7,6 @@ authors = ["Charles Saracco <crsaracco@gmail.com>"]
 name = "music-checker"
 path = "src/main.rs"
 
-[[bin]]
-name = "musicbrainz-driver"
-path = "src/musicbrainz-driver.rs"
-
 [dependencies]
 rusqlite = "*"
 getopts = "*"

@@ -11,8 +11,8 @@ For now, your "collection" is just some metadata inside a sqlite database, and t
 You need to be running a nightly version of Rust, since this project is using the `serde` crate using the "nightly" method.
 
 ### TODOs:
- - `musicbrainz.rs`: `check_release_group_official()` - need to make a Release type, get all Releases from a given ReleaseGroup, and check if any of them are official.
  - Start using `rustfmt`
+ - Move anything that the user has to change into a config file, then gitignore that file
  - `grep -Ri "todo" .`
 
 ### License

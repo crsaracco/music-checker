@@ -122,8 +122,9 @@ fn check_single_artist_least_recent() {
     for release in releases {
         if release.first_release_date != "" {
             if release.primary_type == "Album" || release.primary_type == "EP" || release.primary_type == "Other" {  // TODO: use a match instead?
-                println!("{} {:10}{:15}{}", release.id, release.primary_type, release.first_release_date, release.title);
-                musicbrainz.check_release_group_official(release.id);
+                if musicbrainz.check_release_group_official(release.id.clone()) {
+                    println!("{}   {:10}{:15}{}", release.id, release.primary_type, release.first_release_date, release.title);
+                }
             }
         }
     }
@@ -131,7 +132,7 @@ fn check_single_artist_least_recent() {
     // Need:
     // 1. [DONE] Database to get least-recently-checked artist
     // 2. [DONE] MusicBrainz to check the artist's release groups
-    // 3. MusicBrainz to check each release-group that we potentially care about and see if it's an official release
+    // 3. [DONE] MusicBrainz to check each release-group that we potentially care about and see if it's an official release
     // 4. Database to store any release-groups we don't already have
     // 5. Database to update the lastChecked value for this artist
 

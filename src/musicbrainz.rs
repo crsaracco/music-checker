@@ -24,6 +24,17 @@ struct ReleaseGroups {
     release_groups: Vec<ReleaseGroup>,
 }
 
+#[derive(Serialize, Deserialize, Debug, Default)]
+pub struct Release {
+    // I pretty much only care about the "status" for right now.
+    status: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Default)]
+struct Releases {
+    releases: Vec<Release>,
+}
+
 pub struct MusicBrainz {
     user_agent: String,
     rate_limit: Ratelimit,
@@ -56,15 +67,11 @@ impl MusicBrainz {
             let result_length = json_data.release_groups.len();
             result_vec.append(&mut json_data.release_groups);
 
-            println!("{}", result_length);
-
             if result_length < num_objects {
                 break;
             }
             counter += num_objects
         }
-
-        println!("{}", result_vec.len());
 
         result_vec
     }
@@ -72,14 +79,33 @@ impl MusicBrainz {
     // TODO: Make a function "fetch_releases(release_group_id) -> Vec<Release>"
 
     pub fn check_release_group_official(&mut self, release_group_id: String) -> bool {
+        // First, fetch the releases.
+        let mut result_vec: Vec<Release> = Vec::new();
         let mut counter = 0;
         let num_objects = 100;
         loop {
             let url = format!("http://musicbrainz.org/ws/2/release?release-group={}&fmt=json&limit={}&offset={}", release_group_id, num_objects, counter);
             let url_data = self.fetch_url(url);
-            println!("{}", url_data);
+            let mut json_data: Releases = serde_json::from_str(&url_data).unwrap();
+
+            let result_length = json_data.releases.len();
+            result_vec.append(&mut json_data.releases);
+
+            //println!("{}", url_data);
+
+            if result_length < num_objects {
+                break;
+            }
+            counter += num_objects
         }
-        true
+
+        // Then, loop through the results and see if any of them are "official".
+        for release in result_vec {
+            if release.status == "Official" {
+                return true;
+            }
+        }
+        false
     }
 
     fn fetch_url(&mut self, url: String) -> String {
@@ -87,10 +113,8 @@ impl MusicBrainz {
         let mut response_body = String::new();
         let client = Client::new();
 
-        println!("{}", url);
         let user_agent = self.user_agent.clone();
         let mut res = client.get(&url).header(UserAgent(user_agent)).send().unwrap();
-        println!("Status Code: {}", res.status);
         res.read_to_string(&mut response_body).unwrap();
         response_body
     }
