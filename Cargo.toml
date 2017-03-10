@@ -1,0 +1,7 @@
+[package]
+name = "music-checker"
+version = "0.1.0"
+authors = ["Charles Saracco <crsaracco@gmail.com>"]
+
+[dependencies]
+getopts = "0.2"
