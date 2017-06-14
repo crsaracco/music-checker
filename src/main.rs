@@ -1,4 +1,5 @@
 extern crate getopts;
+extern crate music_checker;
 
 use std::env;
 use std::process;
@@ -37,11 +38,11 @@ fn main() {
 
 	// Read the user agent from the `user-agent.txt` file:
 	let user_agent = get_user_agent();
+	print!("User agent: {}", user_agent);
 
     if matches.opt_present("n") {
         // Make a new database and quit.
-        println!("\nnew database\n");
-        unimplemented!();
+        music_checker::new_database();
         process::exit(0);
     }
 
@@ -54,16 +55,13 @@ fn main() {
         process::exit(1);
     } else if opt_a_present {
         // Check all artists
-        println!("\ncheck all artists\n");
-        unimplemented!();
+        music_checker::check_all_artists();
     } else if opt_s_present {
         // Check single least-recently-checked artist
-        println!("\ncheck single artist\n");
-        unimplemented!();
+        music_checker::check_single_artist();
     } else {
         // Print missing releases
-        println!("\nprint missing releases\n");
-        unimplemented!();
+        music_checker::print_missing_releases();
     }
 }
 
@@ -86,6 +84,5 @@ fn get_user_agent() -> String {
 		println!("ERROR: Edit the `user-agent.txt` file.");
 		exit(1);
 	}
-	print!("{}", s);
 	s
 }
